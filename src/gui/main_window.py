@@ -44,6 +44,7 @@ class MainWindow(QMainWindow):
         self.refresh_credentials()
 
     def refresh_credentials(self):
+        print(f"Refreshing credentials, show_passwords: {self.show_passwords}")
         self.table.setRowCount(0)
         credentials = CredentialManager.get_all_credentials()
         for row, credential in enumerate(credentials):
@@ -53,6 +54,7 @@ class MainWindow(QMainWindow):
             
             password = credential.password.replace('\x00', '') if credential.password else ""
             display_password = password if self.show_passwords else "*" * len(password)
+            print(f"Password: {password}, Display: {display_password}, show_passwords: {self.show_passwords}")
             
             password_item = QTableWidgetItem(display_password)
             password_item.setData(Qt.UserRole, password)
@@ -77,5 +79,7 @@ class MainWindow(QMainWindow):
             self.refresh_credentials()
 
     def toggle_password_visibility(self, state):
-        self.show_passwords = state == Qt.Checked
+        # In PySide6, checked state is 2, unchecked is 0
+        self.show_passwords = (state == 2)
+        print(f"Toggle password visibility: state={state}, show_passwords={self.show_passwords}")
         self.refresh_credentials()
